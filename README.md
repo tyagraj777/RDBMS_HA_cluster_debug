@@ -4,6 +4,7 @@ This script combines monitoring functionalities for HA clusters while identifyin
 Dependencies  needed for runing:"
 1. git 
 2. pcs
+   
 use - $sudo apt install -y "package name"
 
 How to Use:
