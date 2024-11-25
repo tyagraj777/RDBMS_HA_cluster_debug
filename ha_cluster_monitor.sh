@@ -36,10 +36,26 @@ check_split_brain() {
 # Function to check network partitioning
 check_network_partition() {
     echo "Checking Network Partitioning..."
-    for node in $(pcs status | grep Online | awk '{print $1}'); do
-        ping -c 3 "$node" > /dev/null && echo "Node $node reachable." || echo "Node $node unreachable!"
-    done
-    echo ""
+# Extract online nodes from pcs status
+online_nodes=$(pcs status | grep -E "Online: \[" | grep -oP "(?<=\[).*(?=\])" | tr ',' ' ')
+
+if [ -z "$online_nodes" ]; then
+    echo "No online nodes found in pcs status output."
+    exit 1
+fi
+
+# echo "Detected online nodes: $online_nodes"
+# echo "Starting ping tests..."
+
+# Loop through each online node and perform ping test
+for node in $online_nodes; do
+    echo "Pinging node: $node..."
+    if ping -c 3 "$node" &> /dev/null; then
+        echo "Node $node is reachable."
+    else
+        echo "Node $node is NOT reachable."
+    fi
+done
 }
 
 # Function to check replication lag
